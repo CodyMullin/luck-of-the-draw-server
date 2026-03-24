@@ -8,7 +8,6 @@ RUN bun install --frozen-lockfile --production
 # Copy source and data
 COPY src ./src
 COPY drizzle.config.ts ./
-COPY data ./data
 
 EXPOSE 3000
 
