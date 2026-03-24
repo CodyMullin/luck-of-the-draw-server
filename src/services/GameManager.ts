@@ -17,6 +17,7 @@ export interface RoundState {
   answered: boolean;
   winnerId: number | null;
   winnerName: string | null;
+  selectedPlayerID: string | null;
 }
 
 export interface GameState {
