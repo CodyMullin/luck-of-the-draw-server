@@ -84,6 +84,7 @@ function startRound(
       answered: false,
       winnerId: null as number | null,
       winnerName: null as string | null,
+      selectedPlayerID: null as string | null,
     };
 
     game.round = round;
@@ -135,6 +136,7 @@ function endRound(
       draw: round.draw,
       winnerId: round.winnerId,
       winnerName: round.winnerName,
+      selectedPlayerID: round.selectedPlayerID,
       validPlayers: round.validPlayers.map((p) => ({
         playerID: p.playerID,
         nameFirst: p.nameFirst,
@@ -330,8 +332,22 @@ export function handleMessage(
         game.round.answered = true;
         game.round.winnerId = playerId;
         game.round.winnerName = displayName;
+        game.round.selectedPlayerID = msg.playerID;
         const currentScore = game.scores.get(playerId) ?? 0;
         game.scores.set(playerId, currentScore + 1);
+
+        const selectedPlayer = game.round.validPlayers.find(
+          (p) => p.playerID === msg.playerID
+        );
+
+        broadcast(game, {
+          type: "answer:correct",
+          winnerName: displayName,
+          selectedPlayerID: msg.playerID,
+          selectedPlayerName: selectedPlayer
+            ? `${selectedPlayer.nameFirst} ${selectedPlayer.nameLast}`
+            : null,
+        });
 
         yield* endRound(game, gameService, lobbyService, gameManager);
         break;
